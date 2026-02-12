@@ -1,0 +1,235 @@
+# Copyright (C) 2024 Gianluca Bernasconi
+# This file is distributed under the GNU AGPLv3.
+msgid ""
+msgstr ""
+"Project-Id-Version: Easy Roles 1.0.0\n"
+"Report-Msgid-Bugs-To: https://gianlucabernasconi.cl/\n"
+"POT-Creation-Date: 2026-02-11 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/class-easy-roles-admin.php
+msgid "Easy Roles"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Plugin navigation"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Roles"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Create Role"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Edit Role"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "WooCommerce detected"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Custom"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Capabilities"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Users"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Edit %s"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Edit"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Clone %s"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Clone"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Delete %s"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Delete"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Create New Role"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Role Name"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "e.g. Content Manager"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Role Slug"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "e.g. content_manager"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Lowercase letters, numbers, and underscores only. Cannot be changed later."
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Search capabilities…"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Search capabilities"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Select All"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Deselect All"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Display Name"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Back to Roles"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Save Changes"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "No capabilities match your search."
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Select group"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "Deselect group"
+msgstr ""
+
+#: includes/class-easy-roles-admin.php
+msgid "selected"
+msgstr ""
+
+#. JS localized strings
+msgid "Are you sure you want to delete this role? Users with this role will be reassigned to Subscriber."
+msgstr ""
+
+msgid "Save changes to this role?"
+msgstr ""
+
+msgid "Role created successfully."
+msgstr ""
+
+msgid "Role updated successfully."
+msgstr ""
+
+msgid "Role deleted successfully."
+msgstr ""
+
+msgid "Role cloned successfully."
+msgstr ""
+
+msgid "An error occurred. Please try again."
+msgstr ""
+
+msgid "Please enter a role slug."
+msgstr ""
+
+msgid "Please enter a role name."
+msgstr ""
+
+msgid "Enter a slug for the cloned role:"
+msgstr ""
+
+msgid "Enter a name for the cloned role:"
+msgstr ""
+
+msgid "Loading…"
+msgstr ""
+
+msgid "No capabilities match your search."
+msgstr ""
+
+msgid "Select all"
+msgstr ""
+
+msgid "Deselect all"
+msgstr ""
+
+msgid "Protected"
+msgstr ""
+
+msgid "users"
+msgstr ""
+
+#. AJAX error messages
+#: includes/class-easy-roles-ajax.php
+msgid "Security check failed."
+msgstr ""
+
+#: includes/class-easy-roles-ajax.php
+msgid "You do not have permission to manage roles."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "Role slug and display name are required."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "Role slug must be 60 characters or fewer."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "A role with that slug already exists."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "Failed to create role."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "Role not found."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "This role is protected and cannot be deleted."
+msgstr ""
+
+#: includes/class-easy-roles-manager.php
+msgid "Source role not found."
+msgstr ""
