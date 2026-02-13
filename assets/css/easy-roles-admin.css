@@ -3,64 +3,71 @@
    Only loaded on the plugin's admin page.
    ================================================================ */
 
-/* ─── CSS Custom Properties ───────────────────────────────────────── */
+/* ─── CSS Custom Properties (Modern Glass) ───────────────────────── */
 :root {
-    /* Brand palette */
-    --er-brand-black: #06090b;
-    --er-brand-dark: #111c22;
-    --er-brand-teal: #1c696c;
-    --er-brand-gray: #253439;
-
-    /* Teal shades */
-    --er-teal: #1c696c;
-    --er-teal-hover: #238a8e;
-    --er-teal-light: #e6f4f4;
-    --er-teal-subtle: #d0ecec;
-    --er-teal-glow: rgba(28, 105, 108, 0.15);
-
-    /* Semantic colors */
-    --er-primary: var(--er-teal);
-    --er-primary-hover: var(--er-teal-hover);
-    --er-primary-light: var(--er-teal-light);
-    --er-primary-subtle: var(--er-teal-subtle);
-    --er-success: #2a9d8f;
-    --er-success-light: #e8f7f5;
-    --er-danger: #e76f51;
-    --er-danger-light: #fdf0ec;
-    --er-danger-hover: #d45a3c;
-    --er-warning: #e9c46a;
-    --er-warning-light: #fdf8eb;
-    --er-wc-purple: #7f54b3;
-    --er-wc-light: #f5f0fa;
+    /* Base Palette (WP Native) */
+    --er-bg: #f0f0f1;
+    --er-bg-white: #ffffff;
+    --er-bg-subtle: #f6f7f7;
 
     /* Text */
-    --er-text: #111827;
-    --er-text-secondary: #4b5563;
-    --er-text-muted: #9ca3af;
+    --er-text: #1d2327;
+    /* WP Body Text */
+    --er-text-secondary: #50575e;
+    --er-text-muted: #646970;
 
-    /* Surfaces */
-    --er-border: #d1d5db;
-    --er-border-light: #e5e7eb;
-    --er-bg: #f3f4f6;
-    --er-bg-white: #ffffff;
-    --er-bg-subtle: #f9fafb;
-    --er-card-bg: #ffffff;
-    --er-card-border: #e5e7eb;
-    --er-card-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --er-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
+    /* Borders */
+    --er-border: #c3c4c7;
+    --er-border-light: #dcdcde;
+    --er-border-glass: #c3c4c7;
+    /* Solid border for "glass" elements */
 
-    /* Shape & Motion */
-    --er-radius: 0.75rem;
-    --er-radius-sm: 0.5rem;
-    --er-radius-xs: 0.375rem;
-    --er-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --er-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
-    --er-shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
-    --er-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    --er-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Glass / Surface Overrides */
+    --er-bg-glass: rgba(255, 255, 255, 0.95);
+    --er-blur: blur(0px);
+    /* Disable intense blur */
+    --er-shadow-glass: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+    /* Accents (WP Blue) */
+    --er-primary: #2271b1;
+    --er-primary-hover: #135e96;
+    --er-primary-light: #e5f5fa;
+    --er-primary-glow: rgba(34, 113, 177, 0.1);
+
+    /* Status */
+    --er-success: #008a20;
+    --er-warning: #db7403;
+    --er-warning-light: #fef4e8;
+    --er-danger: #d63638;
+    --er-wc-purple: #7f54b3;
+
+    /* Decoration */
+    --er-radius: 4px;
+    /* WP Standard Radius */
+    --er-radius-sm: 3px;
+    --er-transition: 0.2s ease;
+    --er-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    /* Layout */
+    --er-header-height: auto;
+}
+
+body.wp-admin {
+    background: var(--er-bg);
+    color: var(--er-text);
+    /* Font family inherits from WP */
+}
+
+/* ─── Layout & Container ───────────────────────────────────────── */
+.easy-roles-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 }
 
 /* Dark mode — uses brand palette as native foundation */
+/* Dark mode — DISABLED to enforce WP Native Light Theme */
+/*
 @media (prefers-color-scheme: dark) {
     body.wp-admin {
         --er-text: #edf2f7;
@@ -69,12 +76,9 @@
         --er-border: #2d3748;
         --er-border-light: #1a202c;
         --er-bg: #06090b;
-        /* Brand Black */
         --er-bg-white: #0b1114;
-        /* Deepest Teal/Black for panels */
         --er-bg-subtle: #080c10;
         --er-card-bg: #131b20;
-        /* Slightly lighter for cards */
         --er-card-border: #2d3748;
         --er-card-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
         --er-card-shadow-hover: 0 8px 12px rgba(0, 0, 0, 0.5);
@@ -82,9 +86,7 @@
         --er-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
         --er-shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.7);
 
-        /* High contrast accents for dark mode */
         --er-teal: #38b2ac;
-        /* Brighter teal for text/icons */
         --er-teal-hover: #4fd1c5;
         --er-teal-light: rgba(56, 178, 172, 0.1);
         --er-teal-subtle: rgba(56, 178, 172, 0.05);
@@ -93,70 +95,232 @@
         --er-primary: var(--er-teal);
         --er-primary-light: var(--er-teal-light);
         --er-success: #48bb78;
-        /* Brighter green */
         --er-danger: #f56565;
-        /* Brighter red */
         --er-warning: #ecc94b;
         --er-wc-purple: #9f7aea;
     }
 }
+*/
 
-/* ─── Wrap ──────────────────────────────────────────────────────── */
-.easy-roles-wrap {
-    max-width: 76rem;
-    margin: 1.5rem auto 3rem;
-    padding: 0 1rem;
-    font-family: var(--er-font);
-    color: var(--er-text);
-    line-height: 1.5;
-}
-
-/* ─── Header ────────────────────────────────────────────────────── */
-.easy-roles-header {
+/* ─── Modern Header ────────────────────────────────────────────── */
+.easy-roles-header-modern {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
+    align-items: center;
     margin-bottom: 2rem;
-    padding: 1.5rem 2rem;
-    background: linear-gradient(135deg, var(--er-brand-dark) 0%, var(--er-brand-gray) 60%, rgba(28, 105, 108, 0.3) 100%);
+    padding: 1rem 1.5rem;
+    background: var(--er-bg-glass);
+    backdrop-filter: var(--er-blur);
+    border: 1px solid var(--er-border-glass);
     border-radius: var(--er-radius);
-    box-shadow: var(--er-shadow-md), inset 0 -3px 0 var(--er-teal);
-    color: #fff;
+    box-shadow: var(--er-shadow-glass);
 }
 
-.easy-roles-header__title {
+.easy-roles-brand {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
-.easy-roles-header__title .dashicons {
-    font-size: 2rem;
-    width: 2rem;
-    height: 2rem;
-    color: rgba(255, 255, 255, 0.9);
+.easy-roles-brand__icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--er-primary), #2563eb);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }
 
-.easy-roles-header__title h1 {
+.easy-roles-brand__icon .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.easy-roles-brand__info h1 {
     margin: 0;
-    padding: 0;
-    font-size: 1.625rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #fff;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    color: #1d2327;
+    line-height: 1.1;
 }
 
-.easy-roles-version {
+.easy-roles-brand__info .easy-roles-version {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.15);
-    padding: 0.125rem 0.625rem;
-    border-radius: 1rem;
+    color: #50575e;
     font-weight: 500;
-    backdrop-filter: blur(4px);
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.easy-roles-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* ─── Onboarding (Dismissible) ─────────────────────────────────── */
+.easy-roles-onboarding {
+    position: relative;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-left: 4px solid var(--er-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 0;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.easy-roles-onboarding.hidden {
+    display: none;
+}
+
+.easy-roles-close-onboarding {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: #646970;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.easy-roles-close-onboarding:hover {
+    color: #d63638;
+    transform: none;
+}
+
+.easy-roles-onboarding__content {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.easy-roles-onboarding__icon {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--er-primary);
+    flex-shrink: 0;
+}
+
+.easy-roles-onboarding__icon .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.easy-roles-onboarding__text h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    color: #1d2327;
+}
+
+.easy-roles-onboarding__text p {
+    margin: 0;
+    color: #50575e;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* ─── Toolbar & Filters ────────────────────────────────────────── */
+/* ─── Toolbar & Filters ────────────────────────────────────────── */
+.easy-roles-toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.easy-roles-search-modern {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+}
+
+.easy-roles-search-modern .dashicons {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #646970;
+    z-index: 2;
+}
+
+.easy-roles-search-modern input {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #8c8f94;
+    padding: 0 8px 0 36px;
+    height: 36px;
+    line-height: 2;
+    border-radius: 4px;
+    color: #2c3338;
+    font-family: inherit;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.easy-roles-search-modern input:focus {
+    border-color: var(--er-primary);
+    box-shadow: 0 0 0 1px var(--er-primary);
+    outline: none;
+}
+
+.easy-roles-filters {
+    display: flex;
+    gap: 0;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+}
+
+.easy-roles-filter-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #2271b1;
+    padding: 4px 8px;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: none;
+    transition: none;
+    margin-left: 0.5rem;
+}
+
+.easy-roles-filter-btn:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+.easy-roles-filter-btn.active {
+    background: transparent;
+    color: #000;
+    font-weight: 600;
+    border: none;
+    box-shadow: none;
+    cursor: default;
+    text-decoration: none;
+}
+
+/* Separator logic for filters */
+.easy-roles-filter-btn:not(:last-child)::after {
+    content: "|";
+    color: #a7aaad;
+    margin-left: 0.5rem;
+    font-weight: 400;
 }
 
 /* ─── Badges ────────────────────────────────────────────────────── */
@@ -204,24 +368,26 @@
 }
 
 .easy-roles-lang-btn {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--er-text-muted);
     text-decoration: none;
-    padding: 0.25rem;
-    transition: color 0.2s;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s;
+    border-radius: 4px;
 }
 
 .easy-roles-lang-btn:hover {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--er-primary);
+    background: var(--er-primary-glow);
 }
 
 .easy-roles-lang-btn.active {
-    color: #fff;
+    color: var(--er-primary);
+    background: var(--er-primary-light);
     font-weight: 700;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
 .easy-roles-lang-sep {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--er-border);
 }
 
 /* ─── Role Badges (Unified Pill) ──────────────────────────────── */
@@ -245,10 +411,16 @@
 .easy-roles-pill--prot {
     background: var(--er-warning-light) !important;
     color: var(--er-warning) !important;
+    border: 1px solid rgba(219, 116, 3, 0.15) !important;
 }
 
 .easy-roles-pill--wc {
     background: #96588a !important;
+    color: #fff !important;
+}
+
+.easy-roles-pill--custom-wc {
+    background: #a673ba !important;
     color: #fff !important;
 }
 
@@ -401,365 +573,367 @@
     color: var(--er-text-secondary);
 }
 
-/* ─── Tabs ──────────────────────────────────────────────────────── */
+/* ─── Tabs (Hidden in Modern UI) ────────────────────────────────── */
 .easy-roles-tabs {
-    display: flex;
-    gap: 0.25rem;
-    border-bottom: 2px solid var(--er-border-light);
-    margin-bottom: 0;
+    display: none !important;
 }
 
-.easy-roles-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.5rem;
-    border: none;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    background: none;
-    color: var(--er-text-muted);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color var(--er-transition), border-color var(--er-transition), background var(--er-transition);
-    min-height: 3rem;
-    border-radius: var(--er-radius-sm) var(--er-radius-sm) 0 0;
-}
-
-.easy-roles-tab .dashicons {
-    font-size: 1.25rem;
-    width: 1.25rem;
-    height: 1.25rem;
-}
-
-.easy-roles-tab:hover {
-    color: var(--er-primary);
-    background: var(--er-primary-light);
-}
-
-.easy-roles-tab--active {
-    color: var(--er-primary);
-    border-bottom-color: var(--er-primary);
-    font-weight: 600;
-    background: var(--er-bg-white);
-}
-
-.easy-roles-tab--hidden {
-    display: none;
-}
-
-/* ─── Panels ────────────────────────────────────────────────────── */
+/* ─── Panels (Glass Container) ──────────────────────────────────── */
 .easy-roles-panel {
     display: none;
-    padding: 2rem 2.5rem;
-    background: var(--er-bg-white);
-    border: 1px solid var(--er-border-light);
-    border-top: none;
-    border-radius: 0 0 var(--er-radius) var(--er-radius);
-    box-shadow: var(--er-shadow);
+    padding: 2rem;
+    background: var(--er-bg-glass);
+    backdrop-filter: var(--er-blur);
+    border: 1px solid var(--er-border-glass);
+    border-radius: var(--er-radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 2rem;
 }
 
 .easy-roles-panel--active {
     display: block;
+    animation: erFadeIn 0.3s ease-out;
+}
+
+@keyframes erFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ─── Cards Grid ────────────────────────────────────────────────── */
-.easy-roles-cards {
+.easy-roles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 1.5rem;
+    margin-bottom: 2rem;
+    /* Add space at the bottom */
 }
 
+/* ─── Role Cards (Glass) ───────────────────────────────────────── */
 .easy-roles-card {
-    position: relative;
-    border: 1px solid var(--er-card-border);
+    background: var(--er-bg-glass);
+    backdrop-filter: var(--er-blur);
+    border: 1px solid var(--er-border-glass);
     border-radius: var(--er-radius);
-    padding: 0;
-    background: var(--er-card-bg);
-    box-shadow: var(--er-card-shadow);
-    transition: box-shadow var(--er-transition), transform var(--er-transition), border-color var(--er-transition);
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+    transition: var(--er-transition);
+    position: relative;
     overflow: hidden;
 }
 
+.easy-roles-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .easy-roles-card:hover {
-    box-shadow: var(--er-card-shadow-hover);
-    transform: translateY(-3px);
-    border-color: rgba(28, 105, 108, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Colored top accent bar */
-.easy-roles-card::before {
-    content: "";
-    display: block;
-    height: 4px;
-    background: var(--er-teal);
-}
-
-.easy-roles-card--protected::before {
-    background: linear-gradient(90deg, #c8a84e, var(--er-warning));
-}
-
-.easy-roles-card--custom::before {
-    background: linear-gradient(90deg, var(--er-teal), var(--er-teal-hover));
-}
-
-.easy-roles-card--wc::before {
-    background: linear-gradient(90deg, var(--er-wc-purple), #9b7dd4);
-}
-
-.easy-roles-card__body {
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.875rem;
-    flex: 1;
-}
-
+/* Internal Card Components */
 .easy-roles-card__header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
+    align-items: flex-start;
+    gap: 1rem;
 }
 
 .easy-roles-card__name {
     margin: 0;
     font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--er-text);
-    line-height: 1.3;
+    font-weight: 600;
+    color: #1d2327;
+    line-height: 1.4;
 }
 
 .easy-roles-card__meta {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    font-size: 0.8125rem;
-    color: var(--er-text-secondary);
-    padding: 0.625rem 0;
-    border-top: 1px solid var(--er-border-light);
-    border-bottom: 1px solid var(--er-border-light);
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--er-text-muted);
+    border-top: 1px solid var(--er-border-glass);
+    padding-top: 1rem;
+    margin-top: auto;
 }
 
 .easy-roles-card__slug {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    font-size: 0.75rem;
-    background: var(--er-bg);
-    padding: 0.3125rem 0.625rem;
-    border-radius: var(--er-radius-xs);
-    color: var(--er-text-secondary);
-    border: 1px solid var(--er-border-light);
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 11px;
+    background: #f6f7f7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #646970;
+    border: 1px solid #dcdcde;
+    opacity: 1;
 }
 
 .easy-roles-card__stats {
     display: flex;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .easy-roles-card__stats span {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.375rem;
-    font-weight: 500;
-}
-
-.easy-roles-card__stats .dashicons {
-    font-size: 1.125rem;
-    width: 1.125rem;
-    height: 1.125rem;
-    color: var(--er-text-muted);
 }
 
 .easy-roles-card__actions {
     display: flex;
-    gap: 0.625rem;
-    padding: 1rem 1.5rem;
-    background: rgba(0, 0, 0, 0.08);
-    border-top: 1px solid var(--er-border-light);
-    margin-top: auto;
+    gap: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .easy-roles-card__actions {
-        background: rgba(0, 0, 0, 0.2);
-    }
-}
+
 
 /* ─── Buttons ───────────────────────────────────────────────────── */
 .easy-roles-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    font-size: 0.8125rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--er-radius-sm);
-    border: 1px solid transparent;
+    font-size: 13px;
+    padding: 0 10px;
+    border-radius: 3px;
+    border: 1px solid #2271b1;
     cursor: pointer;
-    transition: all var(--er-transition);
-    min-height: 2.25rem;
+    transition: all 0.1s ease;
+    min-height: 30px;
     white-space: nowrap;
-    font-weight: 600;
-    background: transparent;
-    color: var(--er-text-secondary);
-    letter-spacing: 0.01em;
-    position: relative;
-    overflow: hidden;
+    font-weight: 400;
+    background: #f6f7f7;
+    color: #2271b1;
+    line-height: 2;
+    text-decoration: none;
+}
+
+.easy-roles-btn:hover {
+    background: #f0f0f1;
+    border-color: #0a4b78;
+    color: #0a4b78;
+}
+
+.easy-roles-btn:active {
+    background: #f6f7f7;
+    transform: translateY(1px);
 }
 
 .easy-roles-btn .dashicons {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
-    transition: transform var(--er-transition);
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: inherit;
 }
 
-/* Edit button — teal ghost */
-.easy-roles-btn--edit {
-    color: var(--er-teal);
-    border-color: var(--er-teal);
-    background: var(--er-teal-glow);
-}
+/* Edit button — Standard Secondary */
+/* Inherits standard styles */
 
-.easy-roles-btn--edit:hover {
-    background: var(--er-teal);
-    color: #fff;
-    border-color: var(--er-teal);
-    box-shadow: 0 4px 14px rgba(28, 105, 108, 0.35);
-    transform: translateY(-1px);
-}
+/* Clone button — Standard Secondary */
+/* Inherits standard styles */
 
-.easy-roles-btn--edit:hover .dashicons {
-    transform: rotate(-12deg);
-}
-
-/* Clone button — success ghost */
-.easy-roles-btn--clone {
-    color: var(--er-success);
-    border-color: var(--er-success);
-    background: rgba(42, 157, 143, 0.08);
-}
-
-.easy-roles-btn--clone:hover {
-    background: var(--er-success);
-    color: #fff;
-    border-color: var(--er-success);
-    box-shadow: 0 4px 14px rgba(42, 157, 143, 0.35);
-    transform: translateY(-1px);
-}
-
-.easy-roles-btn--clone:hover .dashicons {
-    transform: scale(1.15);
-}
-
-/* Delete button — danger ghost */
+/* Delete button — Destructive */
 .easy-roles-btn--delete {
-    color: var(--er-danger);
-    border-color: rgba(231, 111, 81, 0.3);
-    background: rgba(231, 111, 81, 0.06);
+    color: #d63638;
+    border-color: #d63638;
+    background: #f6f7f7;
 }
 
 .easy-roles-btn--delete:hover {
-    background: var(--er-danger);
+    background: #d63638;
     color: #fff;
-    border-color: var(--er-danger);
-    box-shadow: 0 4px 14px rgba(231, 111, 81, 0.35);
-    transform: translateY(-1px);
+    border-color: #d63638;
 }
 
-/* Submit / primary button */
+/* Submit / primary button - Enhanced */
 .easy-roles-btn--submit {
-    padding: 0.625rem 1.75rem;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--er-teal), var(--er-teal-hover));
+    background: var(--er-primary);
     color: #fff;
-    border-color: transparent;
-    border-radius: var(--er-radius-sm);
-    box-shadow: 0 2px 8px rgba(28, 105, 108, 0.3);
-    letter-spacing: 0.02em;
+    border: 1px solid var(--er-primary);
+    font-weight: 600;
+    padding: 0 20px;
+    height: 40px;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(34, 113, 177, 0.2);
+    transition: all 0.2s ease;
 }
 
 .easy-roles-btn--submit:hover {
-    background: linear-gradient(135deg, var(--er-teal-hover), #2ba4a8);
-    box-shadow: 0 6px 20px rgba(28, 105, 108, 0.4);
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
     transform: translateY(-1px);
+    box-shadow: 0 6px 8px rgba(34, 113, 177, 0.3);
+}
+
+.easy-roles-btn--submit:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(34, 113, 177, 0.2);
 }
 
 .easy-roles-btn--submit .dashicons {
-    font-size: 1.125rem;
-    width: 1.125rem;
-    height: 1.125rem;
+    color: #fff;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 4px;
+}
+
+/* "Add New" button in toolbar - Prominent */
+.easy-roles-btn--create {
+    background: var(--er-primary);
+    color: #fff;
+    border: 1px solid var(--er-primary);
+    font-weight: 600;
+    padding: 0 16px;
+    height: 36px;
+    font-size: 13px;
+    box-shadow: 0 2px 4px rgba(34, 113, 177, 0.2);
+    transition: all 0.2s ease;
+    justify-self: end;
+}
+
+.easy-roles-btn--create:hover {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(34, 113, 177, 0.3);
+}
+
+.easy-roles-btn--create:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(34, 113, 177, 0.2);
+}
+
+.easy-roles-btn--create .dashicons {
+    color: #fff;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Back button */
 .easy-roles-btn--back {
-    margin-right: auto;
-    color: var(--er-text-muted);
-    border-color: var(--er-border);
-    background: transparent;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--er-text-muted) !important;
+    box-shadow: none !important;
+    padding: 0 0.75rem !important;
+    width: auto !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 0.75rem 0 0 !important;
+    gap: 0.25rem !important;
+    white-space: nowrap !important;
+    float: none !important;
 }
 
 .easy-roles-btn--back:hover {
+    background: var(--er-bg-subtle);
+    border-color: var(--er-border-light);
     color: var(--er-text);
-    border-color: var(--er-text-muted);
-    background: rgba(255, 255, 255, 0.05);
+    text-decoration: none;
+}
+
+.easy-roles-btn--back .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Form Title Group */
+.easy-roles-form__title-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Legacy overrides removal */
+.easy-roles-btn--edit:hover .dashicons,
+.easy-roles-btn--clone:hover .dashicons {
+    transform: none;
 }
 
 /* Bulk actions buttons (Select All / Deselect All) */
+/* Bulk actions buttons (Select All / Deselect All) */
 .easy-roles-btn--select-all,
 .easy-roles-btn--deselect-all {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
-    min-height: 2rem;
-    border: 1px solid var(--er-border);
-    color: var(--er-text-secondary);
-    border-radius: var(--er-radius-xs);
-    background: transparent;
-    transition: all var(--er-transition);
+    font-size: 12px;
+    padding: 0 8px;
+    min-height: 24px;
+    border: 1px solid #2271b1;
+    color: #2271b1;
+    border-radius: 3px;
+    background: #f6f7f7;
+    transition: all 0.1s ease;
+    cursor: pointer;
+    line-height: 1.8;
 }
 
 .easy-roles-btn--select-all:hover {
-    border-color: var(--er-teal);
-    color: var(--er-teal);
-    background: var(--er-teal-glow);
+    background: #f0f0f1;
+    color: #0a4b78;
+    border-color: #0a4b78;
+}
+
+.easy-roles-btn--deselect-all {
+    color: #646970;
+    border-color: #c3c4c7;
 }
 
 .easy-roles-btn--deselect-all:hover {
-    border-color: var(--er-text-muted);
-    color: var(--er-text);
-    background: rgba(0, 0, 0, 0.05);
+    color: #d63638;
+    border-color: #d63638;
+    background: #f0f0f1;
 }
 
 /* Group specific buttons (Select group / Deselect group) */
 .easy-roles-btn--group-select,
 .easy-roles-btn--group-deselect {
-    font-size: 0.75rem;
-    /* Compact font */
-    padding: 0.25rem 0.625rem;
-    /* Compact padding */
-    min-height: 1.75rem;
-    /* Smaller height */
-    border: 1px solid var(--er-border-light);
-    color: var(--er-text-secondary);
-    border-radius: var(--er-radius-xs);
-    background: var(--er-bg-white);
+    font-size: 11px;
+    padding: 0 6px;
+    min-height: 22px;
+    border: 1px solid #c3c4c7;
+    color: #2271b1;
+    border-radius: 3px;
+    background: #fff;
     margin-left: 0.5rem;
+    cursor: pointer;
 }
 
 .easy-roles-btn--group-select:hover {
-    border-color: var(--er-teal);
-    color: var(--er-teal);
-    background: var(--er-teal-light);
+    color: #0a4b78;
+    border-color: #2271b1;
+    background: #f6f7f7;
+}
+
+.easy-roles-btn--group-deselect {
+    color: #646970;
 }
 
 .easy-roles-btn--group-deselect:hover {
-    border-color: var(--er-danger-light);
-    color: var(--er-danger);
-    background: var(--er-danger-light);
+    color: #d63638;
+    border-color: #d63638;
+    background: #f6f7f7;
 }
 
 /* ─── Form ──────────────────────────────────────────────────────── */
@@ -770,10 +944,12 @@
 }
 
 .easy-roles-form__header h2 {
-    margin: 0;
-    font-size: 1.375rem;
-    font-weight: 700;
-    color: var(--er-text);
+    margin: 0 !important;
+    font-size: 1.375rem !important;
+    font-weight: 700 !important;
+    color: var(--er-text) !important;
+    line-height: 1.2 !important;
+    float: none !important;
 }
 
 .easy-roles-edit-title {
@@ -1072,11 +1248,19 @@
 }
 
 .easy-roles-cap__name {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--er-text);
     word-break: break-word;
+}
+
+.easy-roles-cap__slug-hint {
+    display: inline-block;
+    color: var(--er-text-muted);
+    font-size: 0.75rem;
+    font-weight: 400;
+    margin-left: 0.375rem;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
 .easy-roles-cap__desc {
@@ -1212,24 +1396,78 @@
     background: var(--er-bg-white);
     border-radius: var(--er-radius);
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-    padding: 2rem;
     width: 90%;
-    max-width: 30rem;
+    max-width: 32rem;
     animation: erSlideUp 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    padding: 0;
 }
 
+.easy-roles-modal__header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--er-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.easy-roles-modal__header h2,
 .easy-roles-modal h3 {
-    margin: 0 0 1.25rem;
-    font-size: 1.25rem;
+    margin: 0;
+    font-size: 1.1rem;
     color: var(--er-text);
-    font-weight: 700;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.easy-roles-modal__close {
+    background: transparent;
+    border: none;
+    color: var(--er-text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+}
+
+.easy-roles-modal__close:hover {
+    background: var(--er-bg-subtle);
+    color: #d63638;
+}
+
+.easy-roles-modal__body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.easy-roles-modal__body p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #50575e;
+    margin: 0;
+}
+
+.easy-roles-modal__footer,
+.easy-roles-modal__actions {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--er-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 0 0 var(--er-radius) var(--er-radius);
 }
 
 .easy-roles-modal label {
     display: block;
     font-weight: 600;
-    font-size: 0.9375rem;
-    margin-bottom: 0.375rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
     color: var(--er-text);
 }
 
@@ -1246,13 +1484,6 @@
     border-color: var(--er-primary);
     box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
     outline: none;
-}
-
-.easy-roles-modal__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
 }
 
 @keyframes erFadeIn {
@@ -1302,7 +1533,7 @@
         padding: 1.25rem 1rem;
     }
 
-    .easy-roles-cards {
+    .easy-roles-grid {
         grid-template-columns: 1fr;
     }
 
@@ -1318,6 +1549,24 @@
 
     .easy-roles-search {
         max-width: none;
+    }
+
+    /* Toolbar stacking */
+    .easy-roles-toolbar {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .easy-roles-search-modern,
+    .easy-roles-filters,
+    .easy-roles-btn--create {
+        width: 100%;
+        max-width: none;
+        justify-self: stretch;
+    }
+
+    .easy-roles-filters {
+        justify-content: center;
     }
 
     .easy-roles-form__fields {
@@ -1383,11 +1632,541 @@
         max-width: 84rem;
     }
 
-    .easy-roles-cards {
+    .easy-roles-grid {
         grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     }
 
     .easy-roles-group__caps {
         grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
     }
+}
+
+/* ─── Footer ────────────────────────────────────────────────────── */
+.easy-roles-admin-footer {
+    margin-top: 4rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--er-border-light);
+    text-align: center;
+    color: var(--er-text-muted);
+    font-size: 0.9375rem;
+}
+
+.easy-roles-admin-footer a {
+    color: var(--er-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--er-transition);
+}
+
+.easy-roles-admin-footer a:hover {
+    color: var(--er-primary-hover);
+    text-decoration: underline;
+}
+
+/* ─── Capability Relationship Badges ────────────────────────────── */
+.easy-roles-badge--key {
+    background-color: #fcefdc;
+    color: #946c00;
+    border: 1px solid #f0c33c;
+    margin-left: 0.5rem;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    letter-spacing: 0.02em;
+}
+
+.easy-roles-badge--anchor {
+    background-color: #e5f5fa;
+    color: #0f5132;
+    /* Actually using green for anchor? Blue might be better */
+    color: #135e96;
+    border: 1px solid #72aee6;
+    margin-left: 0.5rem;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    letter-spacing: 0.02em;
+}
+
+.easy-roles-badge--action {
+    background-color: #f0f0f1;
+    color: #646970;
+    border: 1px solid #c3c4c7;
+    margin-left: 0.5rem;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    letter-spacing: 0.02em;
+}
+
+/* Extra description block inside capability label */
+.easy-roles-cap__extra-desc {
+    display: block;
+    margin-top: 6px;
+    padding: 6px 10px;
+    background-color: #fff;
+    border-left: 3px solid var(--er-primary);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.825rem;
+    color: var(--er-text-secondary);
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.easy-roles-cap__extra-desc .dashicons {
+    color: var(--er-primary);
+    margin-right: 4px;
+}
+
+.easy-roles-admin-footer a:hover {
+    color: var(--er-primary-hover);
+    text-decoration: underline;
+}
+
+/* ─── Didactic Legend Box ───────────────────────────────────────── */
+.easy-roles-legend {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--er-border-light);
+    border-radius: var(--er-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.easy-roles-legend__header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 1rem;
+    color: var(--er-text);
+    font-size: 0.95rem;
+}
+
+.easy-roles-legend__header .dashicons {
+    color: var(--er-primary);
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.easy-roles-legend__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.easy-roles-legend__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--er-bg-subtle);
+    border-radius: var(--er-radius-sm);
+    border: 1px solid transparent;
+    transition: var(--er-transition);
+}
+
+.easy-roles-legend__item:hover {
+    background: #fff;
+    border-color: var(--er-border-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.easy-roles-legend__item .easy-roles-badge {
+    align-self: flex-start;
+    margin-left: 0;
+    margin-bottom: 0.25rem;
+}
+
+.easy-roles-legend__item p {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--er-text-secondary);
+}
+
+/* Legend Footer */
+.easy-roles-legend__footer {
+    border-top: 1px solid var(--er-border-light);
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.easy-roles-btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--er-primary);
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.1s;
+}
+
+.easy-roles-btn-link:hover {
+    color: var(--er-primary-hover);
+    text-decoration: underline;
+}
+
+/* ─── User Management Panel ─────────────────────────────────────── */
+.easy-roles-users-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--er-bg-subtle);
+    border-radius: var(--er-radius-sm);
+    border: 1px solid var(--er-border-light);
+}
+
+.easy-roles-users-role-picker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.easy-roles-users-select {
+    min-width: 14rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--er-border);
+    border-radius: var(--er-radius);
+    font-size: 0.9375rem;
+    background: var(--er-bg-white);
+    color: var(--er-text);
+    cursor: pointer;
+    transition: border-color var(--er-transition);
+}
+
+.easy-roles-users-select:focus {
+    border-color: var(--er-primary);
+    box-shadow: 0 0 0 1px var(--er-primary);
+    outline: none;
+}
+
+.easy-roles-users-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 14rem;
+    max-width: 22rem;
+}
+
+.easy-roles-users-search .dashicons {
+    color: var(--er-text-muted);
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* User Rows */
+.easy-roles-users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.easy-roles-user-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--er-bg-white);
+    border: 1px solid var(--er-border-light);
+    border-bottom: none;
+    transition: background var(--er-transition);
+}
+
+.easy-roles-user-row:first-child {
+    border-radius: var(--er-radius) var(--er-radius) 0 0;
+}
+
+.easy-roles-user-row:last-child {
+    border-bottom: 1px solid var(--er-border-light);
+    border-radius: 0 0 var(--er-radius) var(--er-radius);
+}
+
+.easy-roles-user-row:only-child {
+    border-radius: var(--er-radius);
+    border-bottom: 1px solid var(--er-border-light);
+}
+
+.easy-roles-user-row:hover {
+    background: var(--er-bg-subtle);
+}
+
+.easy-roles-user-row__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+    border: 2px solid var(--er-border-light);
+}
+
+.easy-roles-user-row__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.easy-roles-user-row__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--er-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.easy-roles-user-row__email {
+    font-size: 0.8125rem;
+    color: var(--er-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.easy-roles-user-row__role-change {
+    flex-shrink: 0;
+}
+
+.easy-roles-user-row__role-select {
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--er-border);
+    border-radius: var(--er-radius);
+    font-size: 0.8125rem;
+    background: var(--er-bg-white);
+    color: var(--er-text);
+    cursor: pointer;
+    min-width: 10rem;
+    transition: border-color var(--er-transition);
+}
+
+.easy-roles-user-row__role-select:focus {
+    border-color: var(--er-primary);
+    box-shadow: 0 0 0 1px var(--er-primary);
+    outline: none;
+}
+
+/* Empty/Loading states */
+.easy-roles-users-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--er-text-muted);
+}
+
+.easy-roles-users-empty p {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-style: italic;
+}
+
+.easy-roles-users-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.easy-roles-users-skeleton {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--er-border-light);
+    border-bottom: none;
+    background: var(--er-bg-white);
+}
+
+.easy-roles-users-skeleton:last-child {
+    border-bottom: 1px solid var(--er-border-light);
+}
+
+.easy-roles-users-skeleton__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0f0f1 25%, #e8e9ea 50%, #f0f0f1 75%);
+    background-size: 200% 100%;
+    animation: erSkeletonPulse 1.5s ease-in-out infinite;
+}
+
+.easy-roles-users-skeleton__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.easy-roles-users-skeleton__line {
+    height: 0.75rem;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #f0f0f1 25%, #e8e9ea 50%, #f0f0f1 75%);
+    background-size: 200% 100%;
+    animation: erSkeletonPulse 1.5s ease-in-out infinite;
+}
+
+.easy-roles-users-skeleton__line--short {
+    width: 60%;
+}
+
+.easy-roles-users-skeleton__line--long {
+    width: 80%;
+}
+
+@keyframes erSkeletonPulse {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Pagination */
+.easy-roles-users-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--er-border-light);
+}
+
+.easy-roles-users-page-info {
+    font-size: 0.875rem;
+    color: var(--er-text-secondary);
+    font-weight: 500;
+    min-width: 8rem;
+    text-align: center;
+}
+
+/* Clickable user count on role cards */
+.easy-roles-card__user-link {
+    cursor: pointer;
+    transition: color var(--er-transition);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.easy-roles-card__user-link:hover {
+    color: var(--er-primary);
+}
+
+.easy-roles-card__user-link:focus {
+    outline: 2px solid var(--er-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Self-user highlight (you can't change your own role) */
+.easy-roles-user-row--self {
+    background: var(--er-primary-light);
+    border-left: 3px solid var(--er-primary);
+}
+
+.easy-roles-user-row--self .easy-roles-user-row__role-select {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* Responsive users panel */
+@media (max-width: 782px) {
+    .easy-roles-users-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .easy-roles-users-search {
+        max-width: none;
+    }
+
+    .easy-roles-users-select {
+        width: 100%;
+    }
+
+    .easy-roles-user-row {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .easy-roles-user-row__role-change {
+        width: 100%;
+    }
+
+    .easy-roles-user-row__role-select {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+/* ─── Ghost "Add New" Card ──────────────────────────────────────── */
+.easy-roles-card--add-new {
+    border: 2px dashed var(--er-border);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    padding: 1.5rem;
+    transition: all var(--er-transition);
+    color: var(--er-text-secondary);
+    box-shadow: none;
+    box-sizing: border-box;
+    aspect-ratio: 16 / 9;
+    /* Give it a consistent shape without forcing height */
+}
+
+.easy-roles-card--add-new:hover,
+.easy-roles-card--add-new:focus {
+    border-color: var(--er-primary);
+    color: var(--er-primary);
+    background: var(--er-primary-light);
+    transform: translateY(-4px) !important;
+    /* Match regular card hover transform */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.easy-roles-card--add-new:active {
+    transform: translateY(0) !important;
+}
+
+.easy-roles-card--add-new .dashicons {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 0.5rem 0;
+    /* Clear any WordPress margins */
+    transition: transform 0.2s ease;
+}
+
+.easy-roles-card--add-new:hover .dashicons {
+    transform: scale(1.1);
+}
+
+.easy-roles-card--add-new h3 {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
 }

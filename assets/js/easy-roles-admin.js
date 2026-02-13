@@ -28,7 +28,12 @@
         initFormCreate();
         initFormEdit();
         initBackButton();
+        initDashboardFilters();
+        initOnboarding();
+        initToolbarActions();
+        initModals();
         updateAllGroupCounts();
+        initUsersPanel();
     }
 
     /* ================================================================
@@ -41,6 +46,37 @@
                 switchTab(tab.id);
             });
         });
+
+        /* Header Create Button */
+        var headerBtn = document.getElementById('er-header-create');
+        if (headerBtn) {
+            headerBtn.addEventListener('click', function () {
+                var createTab = document.getElementById('er-tab-create');
+                if (createTab) {
+                    /* Trigger click on the tab to use existing switch logic */
+                    createTab.click();
+                }
+            });
+        }
+
+        /* Ghost Card Create Button (Grid) */
+        var ghostCard = document.getElementById('er-card-create');
+        if (ghostCard) {
+            ghostCard.addEventListener('click', function () {
+                var createTab = document.getElementById('er-tab-create');
+                if (createTab) {
+                    createTab.click();
+                }
+            });
+            // Accessibility: Enter key support
+            ghostCard.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    var createTab = document.getElementById('er-tab-create');
+                    if (createTab) createTab.click();
+                }
+            });
+        }
     }
 
     function switchTab(tabId) {
@@ -58,9 +94,27 @@
         var panel = document.getElementById(tab.getAttribute('aria-controls'));
 
         tab.classList.remove('easy-roles-tab--hidden');
+        tab.style.display = ''; /* Limpiar inline display:none (ej. tab de edición) */
         tab.classList.add('easy-roles-tab--active');
         tab.setAttribute('aria-selected', 'true');
         panel.classList.add('easy-roles-panel--active');
+
+        /* Load Guide Content if needed */
+        if (tabId === 'er-tab-guide') {
+            loadGuideContent();
+        }
+
+        /* Manage Toolbar visibility */
+        var toolbar = document.querySelector('.easy-roles-toolbar');
+        if (toolbar) {
+            if (tabId === 'er-tab-roles') {
+                toolbar.style.display = 'flex';
+                /* Re-apply filters just in case */
+                if (typeof applyDashboardFilters === 'function') applyDashboardFilters();
+            } else {
+                toolbar.style.display = 'none';
+            }
+        }
     }
 
     /* ================================================================
@@ -315,21 +369,24 @@
                 caps[capName] = 1;
             });
 
-            form.classList.add('easy-roles-loading');
+            /* Validate visibility requirements */
+            checkVisibilityAndSubmit(caps, function () {
+                form.classList.add('easy-roles-loading');
 
-            ajaxPost('easy_roles_create_role', {
-                role_slug: slug,
-                role_name: name,
-                capabilities: caps
-            }, function (res) {
-                form.classList.remove('easy-roles-loading');
+                ajaxPost('easy_roles_create_role', {
+                    role_slug: slug,
+                    role_name: name,
+                    capabilities: caps
+                }, function (res) {
+                    form.classList.remove('easy-roles-loading');
 
-                if (res.success) {
-                    showToast(strings.roleCreated, 'success');
-                    setTimeout(function () { location.reload(); }, 800);
-                } else {
-                    showToast(res.data.message || strings.errorOccurred, 'error');
-                }
+                    if (res.success) {
+                        showToast(strings.roleCreated, 'success');
+                        setTimeout(function () { location.reload(); }, 800);
+                    } else {
+                        showToast(res.data.message || strings.errorOccurred, 'error');
+                    }
+                });
             });
         });
     }
@@ -344,8 +401,12 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            if (!confirm(strings.confirmUpdate)) return;
+            showConfirm(strings.save_changes, strings.confirmUpdate || 'Are you sure you want to update this role?', function () {
+                submitEditForm(form);
+            });
+        });
 
+        function submitEditForm(form) {
             var slug = document.getElementById('er-edit-slug').value;
             var name = document.getElementById('er-edit-name').value.trim();
 
@@ -355,31 +416,43 @@
                 caps[capName] = 1;
             });
 
-            form.classList.add('easy-roles-loading');
+            /* Validate visibility requirements */
+            checkVisibilityAndSubmit(caps, function () {
+                var btn = form.querySelector('.easy-roles-btn--submit');
+                if (btn) btn.disabled = true;
 
-            ajaxPost('easy_roles_update_role', {
-                role_slug: slug,
-                role_name: name,
-                capabilities: caps
-            }, function (res) {
-                form.classList.remove('easy-roles-loading');
+                ajaxPost('easy_roles_update_role', {
+                    role_slug: slug,
+                    role_name: name,
+                    capabilities: caps
+                }, function (res) {
+                    if (btn) btn.disabled = false;
 
-                if (res.success) {
-                    showToast(strings.roleUpdated, 'success');
-                    setTimeout(function () { location.reload(); }, 800);
-                } else {
-                    showToast(res.data.message || strings.errorOccurred, 'error');
-                }
+                    if (res.success) {
+                        showToast(strings.roleUpdated, 'success');
+                        setTimeout(function () { location.reload(); }, 800);
+                    } else {
+                        showToast(res.data.message || strings.errorOccurred, 'error');
+                    }
+                });
             });
-        });
+        }
     }
 
     /* ================================================================
        DELETE ROLE
     ================================================================ */
     function deleteRole(slug) {
-        if (!confirm(strings.confirmDelete)) return;
+        var card = document.querySelector('.easy-roles-card[data-role="' + slug + '"]');
+        var roleName = card ? card.querySelector('.easy-roles-card__name').textContent.trim() : slug;
+        var title = (strings.delete_btn || 'Delete') + ': ' + roleName;
 
+        showConfirm(title, strings.confirmDelete || 'Are you sure you want to delete this role?', function () {
+            performDeleteRole(slug);
+        }, true);
+    }
+
+    function performDeleteRole(slug) {
         var card = document.querySelector('.easy-roles-card[data-role="' + slug + '"]');
         if (card) card.classList.add('easy-roles-loading');
 
@@ -387,7 +460,7 @@
             if (card) card.classList.remove('easy-roles-loading');
 
             if (res.success) {
-                showToast(strings.roleDeleted, 'success');
+                showToast(strings.roleDeleted || 'Role deleted', 'success');
                 if (card) {
                     card.style.transition = 'opacity 0.3s, transform 0.3s';
                     card.style.opacity = '0';
@@ -404,89 +477,78 @@
        CLONE ROLE (Modal)
     ================================================================ */
     function showCloneModal(sourceSlug) {
-        /* Create modal overlay */
-        var overlay = document.createElement('div');
-        overlay.className = 'easy-roles-modal-overlay';
-        overlay.innerHTML =
-            '<div class="easy-roles-modal">' +
-            '<h3>' + escapeHtml(strings.cloneName || 'Clone Role') + '</h3>' +
-            '<label for="er-clone-name">' + escapeHtml(strings.cloneName || 'Name') + '</label>' +
-            '<input type="text" id="er-clone-name" class="regular-text" maxlength="100" autofocus>' +
-            '<label for="er-clone-slug">' + escapeHtml(strings.cloneSlug || 'Slug') + '</label>' +
-            '<input type="text" id="er-clone-slug" class="regular-text" maxlength="60" pattern="[a-z0-9_]+">' +
-            '<div class="easy-roles-modal__actions">' +
-            '<button type="button" class="button er-clone-cancel">' + escapeHtml('Cancel') + '</button>' +
-            '<button type="button" class="button button-primary er-clone-confirm">' + escapeHtml('Clone') + '</button>' +
-            '</div>' +
-            '</div>';
+        var card = document.querySelector('.easy-roles-card[data-role="' + sourceSlug + '"]');
+        var sourceName = card ? card.querySelector('.easy-roles-card__name').textContent.trim() : sourceSlug;
 
-        document.body.appendChild(overlay);
+        var html =
+            '<label for="er-clone-name">' + (strings.role_name || 'Role Name') + '</label>' +
+            '<input type="text" id="er-clone-name" class="regular-text" maxlength="100" autofocus>' +
+            '<label for="er-clone-slug">' + (strings.role_slug || 'Role Slug') + '</label>' +
+            '<input type="text" id="er-clone-slug" class="regular-text" maxlength="60" pattern="[a-z0-9_]+">';
+
+        openModal({
+            title: (strings.clone_btn || 'Clone') + ': ' + sourceName,
+            html: html,
+            icon: 'dashicons-admin-page',
+            onConfirm: function () {
+                var name = document.getElementById('er-clone-name').value.trim();
+                var slug = document.getElementById('er-clone-slug').value.trim();
+
+                if (!name || !slug) {
+                    showToast(strings.errorOccurred || 'Please fill required fields', 'error');
+                    return;
+                }
+
+                performClone(sourceSlug, name, slug);
+            }
+        });
 
         /* Auto slug from name */
-        var nameIn = overlay.querySelector('#er-clone-name');
-        var slugIn = overlay.querySelector('#er-clone-slug');
-
-        nameIn.addEventListener('input', function () {
-            slugIn.value = nameIn.value
-                .toLowerCase()
-                .replace(/[^a-z0-9\s_]/g, '')
-                .replace(/\s+/g, '_')
-                .substring(0, 60);
-        });
-
-        /* Cancel */
-        overlay.querySelector('.er-clone-cancel').addEventListener('click', function () {
-            overlay.remove();
-        });
-
-        overlay.addEventListener('click', function (e) {
-            if (e.target === overlay) overlay.remove();
-        });
-
-        /* Confirm */
-        overlay.querySelector('.er-clone-confirm').addEventListener('click', function () {
-            var newName = nameIn.value.trim();
-            var newSlug = slugIn.value.trim();
-
-            if (!newName || !newSlug) {
-                showToast(strings.nameRequired, 'error');
-                return;
+        setTimeout(function () {
+            var nameIn = document.getElementById('er-clone-name');
+            var slugIn = document.getElementById('er-clone-slug');
+            if (nameIn && slugIn) {
+                nameIn.focus();
+                nameIn.addEventListener('input', function () {
+                    slugIn.value = nameIn.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9\s_]/g, '')
+                        .replace(/\s+/g, '_')
+                        .substring(0, 60);
+                });
             }
+        }, 100);
+    }
 
-            overlay.querySelector('.easy-roles-modal').classList.add('easy-roles-loading');
-
-            ajaxPost('easy_roles_clone_role', {
-                source_slug: sourceSlug,
-                new_slug: newSlug,
-                new_name: newName
-            }, function (res) {
-                overlay.remove();
-
-                if (res.success) {
-                    showToast(strings.roleCloned, 'success');
-                    setTimeout(function () { location.reload(); }, 800);
-                } else {
-                    showToast(res.data.message || strings.errorOccurred, 'error');
-                }
-            });
+    function performClone(sourceSlug, name, slug) {
+        ajaxPost('easy_roles_clone_role', {
+            source_slug: sourceSlug,
+            new_name: name,
+            new_slug: slug
+        }, function (res) {
+            if (res.success) {
+                showToast(strings.roleCloned || 'Role cloned', 'success');
+                setTimeout(function () { location.reload(); }, 800);
+            } else {
+                showToast(res.data.message || strings.errorOccurred, 'error');
+            }
         });
-
-        /* Focus name input */
-        setTimeout(function () { nameIn.focus(); }, 100);
     }
 
     /* ================================================================
        BACK BUTTON
     ================================================================ */
     function initBackButton() {
-        var btn = document.getElementById('er-edit-back');
-        if (btn) {
+        document.querySelectorAll('.easy-roles-btn--back').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 switchTab('er-tab-roles');
-                /* Hide edit tab again */
-                document.getElementById('er-tab-edit').classList.add('easy-roles-tab--hidden');
+                /* Hide edit tab again if it was open */
+                var editTab = document.getElementById('er-tab-edit');
+                if (editTab) {
+                    editTab.classList.add('easy-roles-tab--hidden');
+                }
             });
-        }
+        });
     }
 
     /* ================================================================
@@ -552,6 +614,783 @@
         var div = document.createElement('div');
         div.appendChild(document.createTextNode(str || ''));
         return div.innerHTML;
+    }
+
+    /* ================================================================
+       DASHBOARD FILTERS (Search + Toggles)
+    ================================================================ */
+    function initDashboardFilters() {
+        var searchInput = document.getElementById('er-role-search');
+        var filterBtns = document.querySelectorAll('.easy-roles-filter-btn');
+
+        if (!searchInput && filterBtns.length === 0) return;
+
+        /* Text Search */
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                applyDashboardFilters();
+            });
+        }
+
+        /* Category Filter */
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                /* Toggle active class */
+                filterBtns.forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+
+                applyDashboardFilters();
+            });
+        });
+    }
+
+    function applyDashboardFilters() {
+        var searchInput = document.getElementById('er-role-search');
+        var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        var activeBtn = document.querySelector('.easy-roles-filter-btn.active');
+        var catFilter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+
+        var cards = document.querySelectorAll('.easy-roles-card');
+
+        cards.forEach(function (card) {
+            var roleName = (card.querySelector('.easy-roles-card__name') || {}).textContent || '';
+            var roleSlug = card.getAttribute('data-role') || '';
+            var roleType = card.getAttribute('data-type') || 'custom';
+
+            /* Text Match */
+            var matchText = !query || roleName.toLowerCase().indexOf(query) !== -1 || roleSlug.toLowerCase().indexOf(query) !== -1;
+
+            /* Category Match */
+            var matchCat = (catFilter === 'all') || (roleType === catFilter);
+
+            /* Special case: 'native' includes native WP + WC protected */
+            if (catFilter === 'native' && roleType === 'protected') matchCat = true;
+
+            if (matchText && matchCat) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    /* ================================================================
+       ONBOARDING DISMISS
+    ================================================================ */
+    function initOnboarding() {
+        var container = document.getElementById('er-onboarding');
+        var closeBtn = document.querySelector('.easy-roles-close-onboarding');
+
+        if (!container || !closeBtn) return;
+
+        /* Check local storage */
+        if (localStorage.getItem('er_onboarding_dismissed') === 'true') {
+            container.style.display = 'none';
+        }
+
+        closeBtn.addEventListener('click', function () {
+            container.style.transition = 'opacity 0.3s, margin 0.3s';
+            container.style.opacity = '0';
+            container.style.marginBottom = '0';
+            setTimeout(function () { container.style.display = 'none'; }, 300);
+
+            localStorage.setItem('er_onboarding_dismissed', 'true');
+        });
+    }
+
+    /* ================================================================
+       TOOLBAR ACTIONS
+    ================================================================ */
+    function initToolbarActions() {
+        var createBtn = document.getElementById('er-create-role-trigger');
+        if (createBtn) {
+            createBtn.addEventListener('click', function () {
+                switchTab('er-tab-create');
+            });
+        }
+    }
+
+    /* ================================================================
+       MODAL SYSTEM
+    ================================================================ */
+    var modalOverlay, modalTitle, modalMsg, modalIcon, btnCancel, btnConfirm;
+    var onConfirmCallback = null;
+
+    function initModals() {
+        modalOverlay = document.getElementById('er-modal-overlay');
+        if (!modalOverlay) return;
+
+        modalTitle = document.getElementById('er-modal-title');
+        modalMsg = document.getElementById('er-modal-message');
+        modalIcon = document.getElementById('er-modal-icon');
+        btnCancel = document.getElementById('er-modal-cancel');
+        btnConfirm = document.getElementById('er-modal-confirm');
+
+        /* Close on X or Cancel */
+        document.querySelectorAll('.easy-roles-modal__close, #er-modal-cancel').forEach(function (btn) {
+            btn.addEventListener('click', closeModal);
+        });
+
+        /* Close on outside click */
+        modalOverlay.addEventListener('click', function (e) {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        /* Confirm Action */
+        if (btnConfirm) {
+            btnConfirm.addEventListener('click', function () {
+                if (typeof onConfirmCallback === 'function') {
+                    onConfirmCallback();
+                }
+                /* If callback returned false, don't close? usually no return value. */
+                // closeModal(); // Moved closeModal to be called explicitly or handled? 
+                // Wait, if it's async? 
+                // Standard confirm dialog closes immediately.
+                // But specifically for form submit or delete, we might want to keep it open?
+                // The current deleteRole logic does not wait.
+                // But wait, `performDeleteRole` is async.
+
+                // Let's close modal immediately to mimic 'confirm' feel, unless callback handles it.
+                // But for delete role, we might want to show loading?
+                // Modals usually close.
+                closeModal();
+            });
+        }
+    }
+
+    function openModal(opts) {
+        if (!modalOverlay) return;
+
+        modalTitle.textContent = opts.title || '';
+        if (opts.html) {
+            document.querySelector('.easy-roles-modal__body').innerHTML = opts.html;
+        } else {
+            document.querySelector('.easy-roles-modal__body').innerHTML = '<p id="er-modal-message"></p>';
+            document.getElementById('er-modal-message').innerHTML = opts.message || '';
+        }
+
+        modalIcon.className = 'dashicons ' + (opts.icon || 'dashicons-info');
+
+        if (btnConfirm) {
+            btnConfirm.textContent = opts.confirmText || strings.confirm_btn || 'Confirm';
+            // Reset class then add specific
+            btnConfirm.className = 'easy-roles-btn ' + (opts.confirmClass || 'easy-roles-btn--primary');
+            btnConfirm.style.display = opts.hideConfirm ? 'none' : 'inline-flex';
+        }
+        if (btnCancel) {
+            btnCancel.textContent = opts.cancelText || strings.cancel_btn || 'Cancel';
+            btnCancel.style.display = opts.hideCancel ? 'none' : 'inline-flex';
+        }
+
+        onConfirmCallback = opts.onConfirm;
+
+        modalOverlay.style.display = 'flex';
+        modalOverlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+        if (!modalOverlay) return;
+        modalOverlay.style.display = 'none';
+        modalOverlay.setAttribute('aria-hidden', 'true');
+        onConfirmCallback = null;
+    }
+
+    function showConfirm(title, message, callback, destructive) {
+        openModal({
+            title: title,
+            message: message,
+            icon: 'dashicons-warning',
+            confirmClass: destructive ? 'easy-roles-btn--delete' : 'easy-roles-btn--primary',
+            onConfirm: callback
+        });
+    }
+
+    function showAlert(title, message) {
+        openModal({
+            title: title,
+            message: message,
+            icon: 'dashicons-info',
+            hideCancel: true,
+            confirmText: 'OK'
+        });
+    }
+
+    /**
+     * Check if 'read' and 'edit_posts' are present.
+     * If not, show warning modal.
+     */
+    function checkVisibilityAndSubmit(caps, submitCallback) {
+        var hasRead = caps['read'] || false;
+        var hasEdit = caps['edit_posts'] || false;
+
+        if (hasRead && hasEdit) {
+            submitCallback();
+            return;
+        }
+
+        var mainMsg = '';
+        if (!hasRead && !hasEdit) {
+            mainMsg = strings.visibility_warn_both;
+        } else if (!hasRead) {
+            mainMsg = strings.visibility_warn_read;
+        } else {
+            mainMsg = strings.visibility_warn_edit;
+        }
+
+        var fullHtml = `
+            <div style="text-align:center;">
+                <p style="font-size:1.1rem; margin-bottom:1rem;">${mainMsg}</p>
+                <div style="background:#fff5f5; border:1px solid #f8d7da; padding:1rem; border-radius:4px; color:#721c24;">
+                    ${strings.visibility_warn_desc}
+                </div>
+            </div>
+        `;
+
+        showConfirm(
+            strings.visibility_warn_title,
+            fullHtml,
+            submitCallback,
+            false // not destructive style, just warning
+        );
+    }
+
+    /* ================================================================
+       GUIDE CONTENT LOADER (Didactic)
+    ================================================================ */
+    function loadGuideContent() {
+        var container = document.getElementById('er-guide-content');
+        if (!container || container.innerHTML.trim().length > 50) return; // Already loaded
+
+        var isEs = strings.is_es;
+
+        var t = {
+            title: isEs ? '¿Confundido con los Permisos?' : 'Confused by Permissions?',
+            intro: isEs ? 'WordPress tiene cientos de "capacidades", pero solo necesitas entender <strong>3 conceptos clave</strong>. Imagina que tu sitio web es un edificio de oficinas con muchas habitaciones.'
+                : 'WordPress has hundreds of "capabilities", but you only need to understand <strong>3 key concepts</strong>. Imagine your website is an office building with many rooms.',
+            key_label: isEs ? 'LLAVE' : 'KEY',
+            key_title: isEs ? 'La Puerta Principal' : 'The Main Entrance',
+            key_desc: isEs ? 'Son los permisos esenciales. Sin ellos, el usuario <strong>no puede ni entrar</strong> al edificio.' : 'Essential permissions. Without them, the user <strong>cannot even enter</strong> the building.',
+            read_desc: isEs ? 'Permite hacer login. <br><em style="color:#d63638;">Solo con esto verán un perfil vacío.</em>' : 'Allows login. <br><em style="color:#d63638;">With only this, they will see an empty profile.</em>',
+            edit_posts_desc: isEs ? '<strong style="color:#d63638;">VITAL:</strong> Sin esto, WordPress suele ocultar todo el menú lateral.' : '<strong style="color:#d63638;">VITAL:</strong> Without this, WordPress usually hides the entire sidebar menu.',
+            wc_desc: isEs ? 'La llave maestra de la Tienda. Sin ella, no hay ventas ni productos.' : 'The store master key. Without it, there are no sales or products.',
+            anchor_label: isEs ? 'ANCLA' : 'ANCHOR',
+            anchor_title: isEs ? 'Las Habitaciones' : 'The Rooms',
+            anchor_desc: isEs ? 'Imagina que cada menú (Medios, Plugins) es una habitación dentro del edificio.' : 'Imagine that each menu (Media, Plugins) is a room inside the building.',
+            media_desc: isEs ? 'Abre la "Biblioteca de Medios".' : 'Opens the "Media Library".',
+            plugins_room: isEs ? 'Abre la sala de máquinas "Plugins".' : 'Opens the "Plugins" engine room.',
+            pages_room: isEs ? 'Abre la sección de "Páginas".' : 'Opens the "Pages" section.',
+            action_label: isEs ? 'ACCIÓN' : 'ACTION',
+            action_title: isEs ? 'Tareas Específicas' : 'Specific Tasks',
+            action_desc: isEs ? 'Una vez dentro de una habitación, ¿qué puedes hacer? ¿Solo mirar o también romper cosas?' : 'Once inside a room, what can you do? Just look around or also break things?',
+            delete_others: isEs ? '¿Borrar trabajo de otros? (Peligroso).' : "Delete others' work? (Dangerous).",
+            publish_posts: isEs ? '¿Publicar en la web o solo guardar borradores?' : 'Publish on the web or just save drafts?',
+            install_plugins: isEs ? '¿Instalar software nuevo?' : 'Install new software?',
+            recipes_title: isEs ? 'Ejemplos: ¿Qué necesito para...?' : 'Examples: What do I need for...?',
+            blog_editor: isEs ? 'Un Editor de Blog' : 'A Blog Editor',
+            blog_editor_desc: isEs ? 'Alguien que escriba y publique, pero no toque la web.' : 'Someone who writes and publishes, but doesn\'t touch the site setup.',
+            needs: isEs ? 'Necesita' : 'Needs',
+            optional: isEs ? 'Opcional' : 'Optional',
+            trust: isEs ? '(si confías en él)' : '(if you trust them)',
+            shop_manager: isEs ? 'Un Gestor de Tienda' : 'A Store Manager',
+            shop_manager_desc: isEs ? 'Alguien que gestione pedidos y productos.' : 'Someone who manages orders and products.',
+            careful: isEs ? 'Cuidado' : 'Careful',
+            avoid_tax: isEs ? 'Evita <code>manage_woocommerce_settings</code> si no quieres que cambie los impuestos.' : 'Avoid <code>manage_woocommerce_settings</code> if you don\'t want them changing tax settings.',
+            gold_rule: isEs ? 'Cuidado! 🚨' : 'Careful! 🚨',
+            gold_rule_text: isEs ? 'Nunca des a nadie <code>activate_plugins</code>, <code>edit_theme_options</code> o <code>switch_themes</code> a menos que sea un Administrador de confianza. Son las llaves que pueden romper el sitio.'
+                : 'Never give anyone <code>activate_plugins</code>, <code>edit_theme_options</code>, or <code>switch_themes</code> unless they are a trusted Administrator. These are the keys that can break the site.',
+            footer_text: isEs ? '¿Listo para empezar? Vuelve atrás y crea tu primer rol.' : 'Ready to start? Go back and create your first role.',
+            footer_btn: isEs ? 'Crear un Rol Ahora' : 'Create a Role Now'
+        };
+
+        var html = `
+        <div class="easy-roles-guide-container" style="max-width: 900px; margin: 0 auto; line-height: 1.6;">
+            
+            <div class="easy-roles-intro" style="margin-bottom: 2.5rem; text-align: center; padding: 3rem 2rem;">
+                <div class="easy-roles-intro__title" style="justify-content: center; margin-bottom: 1rem; font-size: 1.5rem;">
+                    <span class="dashicons dashicons-welcome-learn-more" style="font-size: 2rem; width: 2rem; height: 2rem;"></span>
+                    ${t.title}
+                </div>
+                <div class="easy-roles-intro__text" style="max-width: 600px; margin: 0 auto; font-size: 1.1rem;">
+                    <p>${t.intro}</p>
+                </div>
+            </div>
+
+            <div class="easy-roles-legend__grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                
+                <div class="easy-roles-legend__item" style="background:#fff; border:1px solid #e2e4e7; padding: 2rem; position: relative; overflow: visible;">
+                    <div style="position: absolute; top: -1rem; left: 50%; transform: translateX(-50%); background: #fcefdc; color: #946c00; border: 1px solid #f0c33c; padding: 0.25rem 1rem; border-radius: 20px; font-weight: bold; font-size: 0.85rem;">${t.key_label}</div>
+                    <h4 style="margin: 1rem 0 1rem; font-size: 1.2rem; text-align: center;">${t.key_title}</h4>
+                    <p style="font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center;">${t.key_desc}</p>
+                    <ul style="list-style: none; margin: 0; padding: 0; font-size: 0.9rem; color: #50575e;">
+                        <li style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f0f1;">
+                            <strong style="color: #1d2327;">read</strong><br>
+                            ${t.read_desc}
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f0f1;">
+                            <strong style="color: #1d2327;">edit_posts</strong><br>
+                            ${t.edit_posts_desc}
+                        </li>
+                        <li>
+                            <strong style="color: #1d2327;">manage_woocommerce</strong><br>
+                            ${t.wc_desc}
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="easy-roles-legend__item" style="background:#fff; border:1px solid #e2e4e7; padding: 2rem; position: relative; overflow: visible;">
+                    <div style="position: absolute; top: -1rem; left: 50%; transform: translateX(-50%); background: #e5f5fa; color: #135e96; border: 1px solid #72aee6; padding: 0.25rem 1rem; border-radius: 20px; font-weight: bold; font-size: 0.85rem;">${t.anchor_label}</div>
+                    <h4 style="margin: 1rem 0 1rem; font-size: 1.2rem; text-align: center;">${t.anchor_title}</h4>
+                    <p style="font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center;">${t.anchor_desc}</p>
+                    <ul style="list-style: none; margin: 0; padding: 0; font-size: 0.9rem; color: #50575e;">
+                        <li style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f0f1;">
+                            <strong style="color: #1d2327;">upload_files</strong><br>
+                            ${t.media_desc}
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f0f1;">
+                            <strong style="color: #1d2327;">activate_plugins</strong><br>
+                            ${t.plugins_room}
+                        </li>
+                        <li>
+                            <strong style="color: #1d2327;">edit_pages</strong><br>
+                            ${t.pages_room}
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="easy-roles-legend__item" style="background:#fff; border:1px solid #e2e4e7; padding: 2rem; position: relative; overflow: visible;">
+                    <div style="position: absolute; top: -1rem; left: 50%; transform: translateX(-50%); background: #f0f0f1; color: #646970; border: 1px solid #c3c4c7; padding: 0.25rem 1rem; border-radius: 20px; font-weight: bold; font-size: 0.85rem;">${t.action_label}</div>
+                    <h4 style="margin: 1rem 0 1rem; font-size: 1.2rem; text-align: center;">${t.action_title}</h4>
+                    <p style="font-size: 0.95rem; margin-bottom: 1.5rem; text-align: center;">${t.action_desc}</p>
+                    <ul style="list-style: none; margin: 0; padding: 0; font-size: 0.9rem; color: #50575e;">
+                        <li style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f0f1;">
+                            <strong style="color: #1d2327;">delete_others_posts</strong><br>
+                            ${t.delete_others}
+                        </li>
+                        <li style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f0f1;">
+                            <strong style="color: #1d2327;">publish_posts</strong><br>
+                            ${t.publish_posts}
+                        </li>
+                        <li>
+                            <strong style="color: #1d2327;">install_plugins</strong><br>
+                            ${t.install_plugins}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin: 0 0 1.5rem; font-size: 1.3rem; color: #1d2327; text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem;">${t.recipes_title}</h3>
+            
+            <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+                
+                <div style="display:flex; align-items: flex-start; gap:1.25rem; padding:1.5rem; background:#fff; border:1px solid #c3c4c7; border-left:4px solid #2271b1; border-radius:4px;">
+                    <div style="background: #f0f6fc; color:#2271b1; padding: 10px; border-radius: 50%;"><span class="dashicons dashicons-welcome-write-blog" style="font-size:24px; width:24px; height:24px;"></span></div>
+                    <div>
+                        <h5 style="margin:0 0 0.5rem; font-size:1.1rem; color: #1d2327;">${t.blog_editor}</h5>
+                        <p style="margin:0 0 1rem; font-size:0.95rem; color:#50575e; line-height: 1.5;">${t.blog_editor_desc}</p>
+                        <div style="font-size: 0.85rem; background: #f6f7f7; padding: 0.75rem; border-radius: 4px;">
+                            <strong>${t.needs}:</strong> <code>read</code> + <code>edit_posts</code> + <code>upload_files</code><br>
+                            <strong>${t.optional}:</strong> <code>publish_posts</code> ${t.trust}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items: flex-start; gap:1.25rem; padding:1.5rem; background:#fff; border:1px solid #c3c4c7; border-left:4px solid #96588a; border-radius:4px;">
+                    <div style="background: #fdf2f8; color:#96588a; padding: 10px; border-radius: 50%;"><span class="dashicons dashicons-store" style="font-size:24px; width:24px; height:24px;"></span></div>
+                    <div>
+                        <h5 style="margin:0 0 0.5rem; font-size:1.1rem; color: #1d2327;">${t.shop_manager}</h5>
+                        <p style="margin:0 0 1rem; font-size:0.95rem; color:#50575e; line-height: 1.5;">${t.shop_manager_desc}</p>
+                        <div style="font-size: 0.85rem; background: #f6f7f7; padding: 0.75rem; border-radius: 4px;">
+                            <strong>${t.needs}:</strong> <code>manage_woocommerce</code> + <code>edit_products</code><br>
+                            <strong>${t.careful}:</strong> ${t.avoid_tax}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display:flex; gap:1rem; padding:1.5rem; background:#fcf0f1; border:1px solid #d63638; border-radius:4px; align-items: center;">
+                <span class="dashicons dashicons-warning" style="color:#d63638; font-size:32px; width:32px; height:32px;"></span>
+                <div>
+                    <h5 style="margin:0 0 0.25rem; font-size:1rem; color: #d63638;">${t.gold_rule}</h5>
+                    <p style="margin:0; font-size:0.95rem; color:#1d2327;">${t.gold_rule_text}</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem; color: #646970; font-size: 0.9rem;">
+                <p>${t.footer_text}</p>
+                <button type="button" class="easy-roles-btn easy-roles-btn--primary" onclick="document.getElementById('er-tab-create').click()" style="margin-top: 0.5rem;">
+                    ${t.footer_btn}
+                </button>
+            </div>
+
+        </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    /* ================================================================
+       USER MANAGEMENT PANEL
+       Aquí va toda la lógica del panel de usuarios jeje.
+       Dos puntos de entrada:
+       1. Tab permanente "Users" con dropdown de roles.
+       2. Click contextual en el user-count de cada tarjeta de rol.
+    ================================================================ */
+    function initUsersPanel() {
+        var allRoles = data.allRoles || {};
+        var currentUserId = parseInt(data.currentUserId, 10) || 0;
+
+        /* DOM References */
+        var roleSelect = document.getElementById('er-users-role-select');
+        var searchWrap = document.getElementById('er-users-search-wrap');
+        var searchInput = document.getElementById('er-users-search');
+        var listContainer = document.getElementById('er-users-list');
+        var emptyState = document.getElementById('er-users-empty');
+        var pagination = document.getElementById('er-users-pagination');
+        var prevBtn = document.getElementById('er-users-prev');
+        var nextBtn = document.getElementById('er-users-next');
+        var pageInfo = document.getElementById('er-users-page-info');
+        var roleBadge = document.getElementById('er-users-role-badge');
+        var backBtn = document.getElementById('er-users-back');
+
+        /* State */
+        var currentRole = '';
+        var currentPage = 1;
+        var totalPages = 1;
+        var searchTimer = null;
+
+        if (!roleSelect || !listContainer) return;
+
+        /* ─── Entry point 1: Dropdown change ─── */
+        roleSelect.addEventListener('change', function () {
+            var selectedRole = roleSelect.value;
+            if (selectedRole) {
+                currentRole = selectedRole;
+                currentPage = 1;
+                loadUsers();
+            } else {
+                resetPanel();
+            }
+        });
+
+        /* ─── Entry point 2: Click en el user-count de las tarjetas ─── */
+        document.querySelectorAll('.easy-roles-card__user-link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var role = link.getAttribute('data-role');
+                if (!role) return;
+
+                /* Cambiar a la tab de usuarios */
+                switchTab('er-tab-users');
+
+                /* Seleccionar el rol en el dropdown */
+                roleSelect.value = role;
+                currentRole = role;
+                currentPage = 1;
+                loadUsers();
+            });
+
+            /* Keyboard support */
+            link.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    link.click();
+                }
+            });
+        });
+
+        /* ─── Back button ─── */
+        if (backBtn) {
+            backBtn.addEventListener('click', function () {
+                switchTab('er-tab-roles');
+            });
+        }
+
+        /* ─── Search (debounced, filtra client-side) ─── */
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    filterUsersClientSide();
+                }, 300);
+            });
+        }
+
+        /* ─── Pagination ─── */
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function () {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadUsers();
+                }
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function () {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadUsers();
+                }
+            });
+        }
+
+        /* ─── Load users via AJAX ─── */
+        function loadUsers() {
+            showLoadingSkeleton();
+            updateRoleBadge();
+            showSearchBar();
+
+            ajaxPost('easy_roles_get_users', {
+                role_slug: currentRole,
+                page: currentPage
+            }, function (res) {
+                if (!res.success) {
+                    showToast(res.data.message || strings.errorOccurred, 'error');
+                    resetPanel();
+                    return;
+                }
+
+                var usersData = res.data.users || [];
+                totalPages = res.data.total_pages || 1;
+                currentPage = res.data.current_page || 1;
+
+                renderUsers(usersData);
+                updatePagination(res.data.total);
+
+                /* Limpiar búsqueda al cambiar de rol */
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+            });
+        }
+
+        /* ─── Render user rows ─── */
+        function renderUsers(users) {
+            /* Limpiar el contenedor */
+            listContainer.innerHTML = '';
+
+            if (users.length === 0) {
+                listContainer.innerHTML = '<div class="easy-roles-users-empty">' +
+                    '<span class="dashicons dashicons-admin-users" style="font-size: 3rem; width: 3rem; height: 3rem; color: var(--er-border); margin-bottom: 1rem;"></span>' +
+                    '<p>' + escapeHtml(strings.no_users) + '</p>' +
+                    '</div>';
+                return;
+            }
+
+            users.forEach(function (user) {
+                var isSelf = (user.id === currentUserId);
+                var row = document.createElement('div');
+                row.className = 'easy-roles-user-row' + (isSelf ? ' easy-roles-user-row--self' : '');
+                row.setAttribute('data-user-id', user.id);
+                row.setAttribute('data-name', (user.display_name || '').toLowerCase());
+                row.setAttribute('data-email', (user.email || '').toLowerCase());
+
+                /* Avatar */
+                var avatarHtml = '<img class="easy-roles-user-row__avatar" ' +
+                    'src="' + escapeHtml(user.avatar_url) + '" ' +
+                    'alt="' + escapeHtml(user.display_name) + '" ' +
+                    'loading="lazy" width="40" height="40">';
+
+                /* Info */
+                var infoHtml = '<div class="easy-roles-user-row__info">' +
+                    '<span class="easy-roles-user-row__name">' + escapeHtml(user.display_name) + '</span>' +
+                    '<span class="easy-roles-user-row__email">' + escapeHtml(user.email) + '</span>' +
+                    '</div>';
+
+                /* Role dropdown */
+                var selectHtml = '<div class="easy-roles-user-row__role-change">';
+                selectHtml += '<select class="easy-roles-user-row__role-select" data-user-id="' + user.id + '"';
+                selectHtml += ' aria-label="' + escapeHtml(strings.change_role + ': ' + user.display_name) + '"';
+                if (isSelf) {
+                    selectHtml += ' disabled title="' + escapeHtml(strings.self_demote_warn) + '"';
+                }
+                selectHtml += '>';
+
+                /* Opciones del dropdown */
+                Object.keys(allRoles).forEach(function (roleSlug) {
+                    var roleName = allRoles[roleSlug];
+                    var selected = (roleSlug === currentRole) ? ' selected' : '';
+                    selectHtml += '<option value="' + escapeHtml(roleSlug) + '"' + selected + '>';
+                    selectHtml += escapeHtml(roleName);
+                    selectHtml += '</option>';
+                });
+
+                selectHtml += '</select></div>';
+
+                row.innerHTML = avatarHtml + infoHtml + selectHtml;
+                listContainer.appendChild(row);
+            });
+
+            /* Attach role change listeners */
+            listContainer.querySelectorAll('.easy-roles-user-row__role-select').forEach(function (select) {
+                select.addEventListener('change', function () {
+                    handleRoleChange(select);
+                });
+            });
+        }
+
+        /* ─── Handle role change ─── */
+        function handleRoleChange(selectEl) {
+            var userId = parseInt(selectEl.getAttribute('data-user-id'), 10);
+            var newRole = selectEl.value;
+
+            /* Si es el mismo rol, no hacer nada */
+            if (newRole === currentRole) {
+                return;
+            }
+
+            var targetRoleName = allRoles[newRole] || newRole;
+            var row = selectEl.closest('.easy-roles-user-row');
+            var userName = '';
+            if (row) {
+                var nameEl = row.querySelector('.easy-roles-user-row__name');
+                userName = nameEl ? nameEl.textContent : '';
+            }
+
+            /* Confirmación con modal */
+            showConfirm(
+                strings.change_role,
+                strings.confirm_change_role + '\n\n' + userName + ' → ' + targetRoleName,
+                function () {
+                    /* Loading state */
+                    if (row) row.classList.add('easy-roles-loading');
+
+                    ajaxPost('easy_roles_change_user_role', {
+                        user_id: userId,
+                        new_role: newRole
+                    }, function (res) {
+                        if (row) row.classList.remove('easy-roles-loading');
+
+                        if (res.success) {
+                            showToast(strings.role_changed, 'success');
+                            /* Recargar la lista porque el usuario ya no está en este rol */
+                            loadUsers();
+                        } else {
+                            showToast(res.data.message || strings.errorOccurred, 'error');
+                            /* Revertir el select al valor original */
+                            selectEl.value = currentRole;
+                        }
+                    });
+                },
+                false
+            );
+
+            /* Si el usuario cancela el modal, revertir el select */
+            var cancelBtn2 = document.getElementById('er-modal-cancel');
+            if (cancelBtn2) {
+                var handler = function () {
+                    selectEl.value = currentRole;
+                    cancelBtn2.removeEventListener('click', handler);
+                };
+                cancelBtn2.addEventListener('click', handler);
+            }
+        }
+
+        /* ─── Client-side search filter ─── */
+        function filterUsersClientSide() {
+            if (!searchInput) return;
+
+            var query = searchInput.value.toLowerCase().trim();
+            var rows = listContainer.querySelectorAll('.easy-roles-user-row');
+            var visibleCount = 0;
+
+            rows.forEach(function (row) {
+                var name = row.getAttribute('data-name') || '';
+                var email = row.getAttribute('data-email') || '';
+                var match = !query || name.indexOf(query) !== -1 || email.indexOf(query) !== -1;
+
+                row.style.display = match ? 'flex' : 'none';
+                if (match) visibleCount++;
+            });
+
+            /* Mostrar empty state si no hay resultados */
+            var existingNoResults = listContainer.querySelector('.easy-roles-users-no-results');
+            if (existingNoResults) existingNoResults.remove();
+
+            if (visibleCount === 0 && rows.length > 0) {
+                var noResults = document.createElement('div');
+                noResults.className = 'easy-roles-users-empty easy-roles-users-no-results';
+                noResults.innerHTML = '<p>' + escapeHtml(strings.no_users) + '</p>';
+                listContainer.appendChild(noResults);
+            }
+        }
+
+        /* ─── Skeleton loading ─── */
+        function showLoadingSkeleton() {
+            var skeletonHtml = '<div class="easy-roles-users-loading">';
+            for (var i = 0; i < 5; i++) {
+                skeletonHtml += '<div class="easy-roles-users-skeleton">' +
+                    '<div class="easy-roles-users-skeleton__avatar"></div>' +
+                    '<div class="easy-roles-users-skeleton__text">' +
+                    '<div class="easy-roles-users-skeleton__line easy-roles-users-skeleton__line--long"></div>' +
+                    '<div class="easy-roles-users-skeleton__line easy-roles-users-skeleton__line--short"></div>' +
+                    '</div></div>';
+            }
+            skeletonHtml += '</div>';
+            listContainer.innerHTML = skeletonHtml;
+        }
+
+        /* ─── Update role badge ─── */
+        function updateRoleBadge() {
+            if (!roleBadge) return;
+
+            if (currentRole && allRoles[currentRole]) {
+                roleBadge.textContent = allRoles[currentRole];
+                roleBadge.style.display = 'inline-flex';
+            } else {
+                roleBadge.style.display = 'none';
+            }
+        }
+
+        /* ─── Show/hide search bar ─── */
+        function showSearchBar() {
+            if (searchWrap) {
+                searchWrap.style.display = currentRole ? 'flex' : 'none';
+            }
+        }
+
+        /* ─── Pagination controls ─── */
+        function updatePagination(totalUsers) {
+            if (!pagination) return;
+
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+
+            pagination.style.display = 'flex';
+
+            /* Page info text */
+            var pageText = strings.page_of
+                .replace('%1', currentPage)
+                .replace('%2', totalPages);
+            if (pageInfo) {
+                pageInfo.textContent = pageText + ' (' + totalUsers + ' total)';
+            }
+
+            /* Button states */
+            if (prevBtn) prevBtn.disabled = (currentPage <= 1);
+            if (nextBtn) nextBtn.disabled = (currentPage >= totalPages);
+        }
+
+        /* ─── Reset panel (no role selected) ─── */
+        function resetPanel() {
+            currentRole = '';
+            currentPage = 1;
+            totalPages = 1;
+
+            listContainer.innerHTML = '<div class="easy-roles-users-empty" id="er-users-empty">' +
+                '<span class="dashicons dashicons-groups" style="font-size: 3rem; width: 3rem; height: 3rem; color: var(--er-border); margin-bottom: 1rem;"></span>' +
+                '<p>' + escapeHtml(strings.select_role_prompt) + '</p>' +
+                '</div>';
+
+            if (pagination) pagination.style.display = 'none';
+            if (searchWrap) searchWrap.style.display = 'none';
+            if (roleBadge) roleBadge.style.display = 'none';
+            if (roleSelect) roleSelect.value = '';
+        }
     }
 
 })();

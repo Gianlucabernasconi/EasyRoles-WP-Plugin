@@ -48,22 +48,32 @@ class Easy_Roles_WooCommerce {
                 'group_desc_en' => 'Core store permissions: WooCommerce menu access, order management, sales reports viewing, coupon administration, and global store configuration (currency, taxes, shipping, payment gateways).',
                 'caps'          => array(
                     'manage_woocommerce' => array(
+                        'name_es' => 'Gestionar WooCommerce',
+                        'name_en' => 'Manage WooCommerce',
                         'desc_es' => 'Capacidad central de gestión de la tienda: abre el menú WooCommerce y da acceso a la mayoría de pantallas internas de administración.',
                         'desc_en' => 'Core store management capability: opens the WooCommerce menu and gives access to most internal admin screens.',
                     ),
                     'manage_woocommerce_orders' => array(
+                        'name_es' => 'Gestionar pedidos',
+                        'name_en' => 'Manage Orders',
                         'desc_es' => 'Permite gestionar pedidos: verlos, cambiarles el estado, añadir notas, actualizar detalles de facturación/envío y procesar reembolsos.',
                         'desc_en' => 'Allows managing orders: viewing, changing status, adding notes, updating billing/shipping details, and processing refunds.',
                     ),
                     'view_woocommerce_reports' => array(
+                        'name_es' => 'Ver informes',
+                        'name_en' => 'View Reports',
                         'desc_es' => 'Permite acceder a los informes/analytics de WooCommerce, incluyendo ventas, ingresos, impuestos, stock y clientes.',
                         'desc_en' => 'Allows accessing WooCommerce reports/analytics, including sales, revenue, taxes, stock, and customers.',
                     ),
                     'manage_woocommerce_coupons' => array(
+                        'name_es' => 'Gestionar cupones',
+                        'name_en' => 'Manage Coupons',
                         'desc_es' => 'Permite crear, editar y borrar cupones de descuento usados en el proceso de compra.',
                         'desc_en' => 'Allows creating, editing, and deleting discount coupons used in the checkout process.',
                     ),
                     'manage_woocommerce_settings' => array(
+                        'name_es' => 'Ajustes de WooCommerce',
+                        'name_en' => 'WooCommerce Settings',
                         'desc_es' => 'Permite cambiar ajustes globales de WooCommerce: moneda, impuestos, métodos de pago, métodos de envío, páginas de tienda, etc.',
                         'desc_en' => 'Allows changing global WooCommerce settings: currency, taxes, payment methods, shipping methods, store pages, etc.',
                     ),
@@ -78,18 +88,26 @@ class Easy_Roles_WooCommerce {
                 'group_desc_en' => 'Controls product catalog management: creating and editing products (simple, variable, grouped), modifying prices and inventory, publishing them in the store, deleting them, and accessing private products.',
                 'caps'          => array(
                     'edit_products' => array(
+                        'name_es' => 'Editar productos',
+                        'name_en' => 'Edit Products',
                         'desc_es' => 'Permite crear y editar productos (simples, variables, agrupados, etc.), modificando precios, inventario, descripciones y atributos.',
                         'desc_en' => 'Allows creating and editing products (simple, variable, grouped, etc.), modifying prices, inventory, descriptions, and attributes.',
                     ),
                     'delete_products' => array(
+                        'name_es' => 'Borrar productos',
+                        'name_en' => 'Delete Products',
                         'desc_es' => 'Permite borrar productos del catálogo, enviándolos a la papelera o borrándolos de forma permanente.',
                         'desc_en' => 'Allows deleting products from the catalog, moving them to trash or permanently.',
                     ),
                     'publish_products' => array(
+                        'name_es' => 'Publicar productos',
+                        'name_en' => 'Publish Products',
                         'desc_es' => 'Permite publicar productos para que sean visibles y comprables en la tienda.',
                         'desc_en' => 'Allows publishing products so they are visible and purchasable in the store.',
                     ),
                     'read_private_products' => array(
+                        'name_es' => 'Ver productos privados',
+                        'name_en' => 'Read Private Products',
                         'desc_es' => 'Permite ver productos marcados como privados, útiles para catálogos restringidos.',
                         'desc_en' => 'Allows viewing products marked as private, useful for restricted catalogs.',
                     ),
@@ -104,18 +122,26 @@ class Easy_Roles_WooCommerce {
                 'group_desc_en' => 'Manages store orders: editing details (address, items, totals), viewing order history, changing statuses, and deleting orders from the database. Deletion is a critical action that should be reserved for administrators.',
                 'caps'          => array(
                     'edit_shop_order' => array(
+                        'name_es' => 'Editar objeto pedido',
+                        'name_en' => 'Edit Shop Order',
                         'desc_es' => 'Permite editar objetos de tipo "shop_order": contenidos de un pedido, dirección del cliente, items, totales, etc.',
                         'desc_en' => 'Allows editing "shop_order" objects: order contents, customer address, items, totals, etc.',
                     ),
                     'read_shop_order' => array(
+                        'name_es' => 'Leer pedidos',
+                        'name_en' => 'Read Shop Order',
                         'desc_es' => 'Permite ver pedidos en el panel. En un rol de gestión, implica acceso a todos los pedidos de la tienda.',
                         'desc_en' => 'Allows viewing orders in the panel. For management roles, implies access to all store orders.',
                     ),
                     'delete_shop_order' => array(
+                        'name_es' => 'Borrar pedidos',
+                        'name_en' => 'Delete Shop Order',
                         'desc_es' => 'Permite borrar pedidos de la base de datos, acción crítica que suele reservarse a administradores.',
                         'desc_en' => 'Allows deleting orders from the database, a critical action usually reserved for administrators.',
                     ),
                     'view_woocommerce_orders' => array(
+                        'name_es' => 'Ver historial de pedidos',
+                        'name_en' => 'View WooCommerce Orders',
                         'desc_es' => 'Permite ver el historial de pedidos asociados a su usuario.',
                         'desc_en' => 'Allows viewing order history associated with the user.',
                     ),
@@ -130,14 +156,20 @@ class Easy_Roles_WooCommerce {
                 'group_desc_en' => 'Manages store discount coupons: creating and editing coupons with usage conditions, limits, discount types, and applicable products. Also allows viewing listings and deleting coupons.',
                 'caps'          => array(
                     'edit_shop_coupon' => array(
+                        'name_es' => 'Editar cupones',
+                        'name_en' => 'Edit Shop Coupon',
                         'desc_es' => 'Permite editar cupones existentes: condiciones, límites de uso, tipos de descuento y productos aplicables.',
                         'desc_en' => 'Allows editing existing coupons: conditions, usage limits, discount types, and applicable products.',
                     ),
                     'read_shop_coupon' => array(
+                        'name_es' => 'Leer cupones',
+                        'name_en' => 'Read Shop Coupon',
                         'desc_es' => 'Permite ver el listado de cupones y sus detalles.',
                         'desc_en' => 'Allows viewing the coupon list and their details.',
                     ),
                     'delete_shop_coupon' => array(
+                        'name_es' => 'Borrar cupones',
+                        'name_en' => 'Delete Shop Coupon',
                         'desc_es' => 'Permite eliminar cupones para que no puedan seguir utilizándose.',
                         'desc_en' => 'Allows deleting coupons so they can no longer be used.',
                     ),
@@ -152,14 +184,20 @@ class Easy_Roles_WooCommerce {
                 'group_desc_en' => 'Manages automatic notifications (webhooks) that WooCommerce sends to external services when certain events occur (new order, product updated, etc.). Allows creating, editing, viewing, and deleting webhooks.',
                 'caps'          => array(
                     'edit_shop_webhook' => array(
+                        'name_es' => 'Editar webhooks',
+                        'name_en' => 'Edit Shop Webhook',
                         'desc_es' => 'Permite crear y editar webhooks de WooCommerce, configurando eventos y endpoints externos.',
                         'desc_en' => 'Allows creating and editing WooCommerce webhooks, configuring events and external endpoints.',
                     ),
                     'read_shop_webhook' => array(
+                        'name_es' => 'Leer webhooks',
+                        'name_en' => 'Read Shop Webhook',
                         'desc_es' => 'Permite ver webhooks configurados, su estado y detalles de envío.',
                         'desc_en' => 'Allows viewing configured webhooks, their status, and delivery details.',
                     ),
                     'delete_shop_webhook' => array(
+                        'name_es' => 'Borrar webhooks',
+                        'name_en' => 'Delete Shop Webhook',
                         'desc_es' => 'Permite borrar webhooks, deteniendo el envío de notificaciones a los endpoints configurados.',
                         'desc_en' => 'Allows deleting webhooks, stopping notifications to configured endpoints.',
                     ),
@@ -174,6 +212,8 @@ class Easy_Roles_WooCommerce {
                 'group_desc_en' => 'Customer role permissions: allows updating own account data such as name, email, password, and shipping and billing addresses from the "My Account" page.',
                 'caps'          => array(
                     'edit_account' => array(
+                        'name_es' => 'Editar cuenta',
+                        'name_en' => 'Edit Account',
                         'desc_es' => 'Permite actualizar los datos de su cuenta: nombre, dirección de email, contraseña, direcciones de envío y facturación.',
                         'desc_en' => 'Allows updating account data: name, email address, password, shipping and billing addresses.',
                     ),
