@@ -146,6 +146,13 @@ class Easy_Roles_Manager {
         $slug         = sanitize_key( $slug );
         $display_name = sanitize_text_field( $display_name );
 
+        if ( self::is_protected( $slug ) ) {
+            return new WP_Error(
+                'easy_roles_protected',
+                __( 'This role is protected and cannot be updated.', 'easy-roles-gb' )
+            );
+        }
+
         $role = wp_roles()->get_role( $slug );
 
         if ( ! $role ) {
@@ -207,11 +214,17 @@ class Easy_Roles_Manager {
             );
         }
 
-        /* Reassign users with this role to subscriber before deleting */
-        $users = get_users( array( 'role' => $slug ) );
-        foreach ( $users as $user ) {
-            $user->set_role( 'subscriber' );
-        }
+        /* Reassign users with this role to subscriber before deleting (batched to avoid memory issues) */
+        $batch_size = 100;
+        do {
+            $users = get_users( array(
+                'role'   => $slug,
+                'number' => $batch_size,
+            ) );
+            foreach ( $users as $user ) {
+                $user->set_role( 'subscriber' );
+            }
+        } while ( count( $users ) === $batch_size );
 
         remove_role( $slug );
         self::untrack_custom_role( $slug );
@@ -258,8 +271,71 @@ class Easy_Roles_Manager {
      * @return int
      */
     public static function count_users_with_role( $slug ) {
-        $count = count_users();
-        return isset( $count['avail_roles'][ $slug ] ) ? (int) $count['avail_roles'][ $slug ] : 0;
+        $cache_key = 'easy_roles_user_counts';
+        $counts    = wp_cache_get( $cache_key, 'easy_roles' );
+        if ( false === $counts ) {
+            $counts = count_users();
+            wp_cache_set( $cache_key, $counts, 'easy_roles', 300 );
+        }
+        return isset( $counts['avail_roles'][ $slug ] ) ? (int) $counts['avail_roles'][ $slug ] : 0;
+    }
+
+    /* ─── Changelog ─────────────────────────────────────────────── */
+
+    /**
+     * Append a log entry to the changelog option (max 100 entries).
+     *
+     * @param string $action    Action type: created, updated, deleted, cloned, imported.
+     * @param string $role_slug Role slug.
+     * @param string $role_name Role display name.
+     * @param array  $extra     Additional context data.
+     */
+    public static function log_change( $action, $role_slug, $role_name = '', $extra = array() ) {
+        $log = get_option( 'easy_roles_changelog', array() );
+        if ( ! is_array( $log ) ) {
+            $log = array();
+        }
+
+        $user       = wp_get_current_user();
+        $entry      = array(
+            'action'     => sanitize_key( $action ),
+            'role_slug'  => sanitize_key( $role_slug ),
+            'role_name'  => sanitize_text_field( $role_name ),
+            'user_id'    => get_current_user_id(),
+            'user_login' => $user ? $user->user_login : '',
+            'timestamp'  => current_time( 'mysql' ),
+            'extra'      => (array) $extra,
+        );
+
+        array_unshift( $log, $entry );
+        $log = array_slice( $log, 0, 100 );
+
+        update_option( 'easy_roles_changelog', $log, 'no' );
+    }
+
+    /**
+     * Get a slice of the changelog.
+     *
+     * @param int $limit  Number of entries to return.
+     * @param int $offset Number of entries to skip.
+     * @return array
+     */
+    public static function get_changelog( $limit = 20, $offset = 0 ) {
+        $log = get_option( 'easy_roles_changelog', array() );
+        if ( ! is_array( $log ) ) {
+            return array();
+        }
+        return array_slice( $log, $offset, $limit );
+    }
+
+    /**
+     * Get total number of changelog entries.
+     *
+     * @return int
+     */
+    public static function get_changelog_count() {
+        $log = get_option( 'easy_roles_changelog', array() );
+        return is_array( $log ) ? count( $log ) : 0;
     }
 
     /* ─── Private helpers ───────────────────────────────────────── */
